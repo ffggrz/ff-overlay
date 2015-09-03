@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layman>
+  <overlay type="git" src="https://github.com/ffggrz/ff-overlay.git" name="ff-overlay" status="unofficial" contact="git@freifunk-gera-greiz.de">
+    <description>The gentoo overlay with Freifunk ebuilds.</description>
+    <link>https://www.freifunk-gera-greiz.de</link>
+  </overlay>
+</layman>
+

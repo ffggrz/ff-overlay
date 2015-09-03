@@ -1,0 +1,3 @@
+caption always "%{rw} * %H * | $LOGNAME | %{bw}%c %D | %{-}%-Lw%{rw}%50>%{rW}%n%f* %t %{-}%+Lw%<"
+screen -t SHELL 0
+screen -t MC    1 /usr/bin/mc

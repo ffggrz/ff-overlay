@@ -1,0 +1,43 @@
+diff -Naur batman-adv-legacy-2013.4.0-orig/compat.h batman-adv-legacy-2013.4.0/compat.h
+--- batman-adv-legacy-2013.4.0-orig/compat.h	2013-10-13 23:40:11.000000000 +0200
++++ batman-adv-legacy-2013.4.0/compat.h	2015-04-06 17:49:09.185432994 +0200
+@@ -318,4 +318,18 @@
+ 	})
+ #endif /* < KERNEL_VERSION(3, 11, 0) */
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3, 17, 0)
++
++/* alloc_netdev() was defined differently before 2.6.38 */
++#undef alloc_netdev
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 38)
++#define alloc_netdev(sizeof_priv, name, name_assign_type, setup) \
++	alloc_netdev_mq(sizeof_priv, name, setup, 1)
++#else
++#define alloc_netdev(sizeof_priv, name, name_assign_type, setup) \
++	alloc_netdev_mqs(sizeof_priv, name, setup, 1, 1)
++#endif /* nested < KERNEL_VERSION(2, 6, 38) */
++
++#endif /* < KERNEL_VERSION(3, 17, 0) */
++
+ #endif /* _NET_BATMAN_ADV_COMPAT_H_ */
+diff -Naur batman-adv-legacy-2013.4.0-orig/soft-interface.c batman-adv-legacy-2013.4.0/soft-interface.c
+--- batman-adv-legacy-2013.4.0-orig/soft-interface.c	2013-10-13 23:40:11.000000000 +0200
++++ batman-adv-legacy-2013.4.0/soft-interface.c	2015-04-06 17:49:09.185432994 +0200
+@@ -626,7 +626,7 @@
+ 	/* generate random address */
+ 	eth_hw_addr_random(dev);
+ 
+-	SET_ETHTOOL_OPS(dev, &batadv_ethtool_ops);
++	dev->ethtool_ops = &batadv_ethtool_ops;
+ 
+ 	memset(priv, 0, sizeof(*priv));
+ }
+@@ -637,7 +637,7 @@
+ 	int ret;
+ 
+ 	soft_iface = alloc_netdev(sizeof(struct batadv_priv), name,
+-				  batadv_softif_init_early);
++				  NET_NAME_UNKNOWN, batadv_softif_init_early);
+ 	if (!soft_iface)
+ 		return NULL;
+ 
