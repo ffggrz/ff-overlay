@@ -14,5 +14,5 @@ Die Installation erfolgt z.B. mittels:
  # cd /etc/layman/overlays
  # wget https://raw.githubusercontent.com/ffggrz/ff-overlay/master/ff-overlay.xml
  # layman -L
- # layman -a unitas
+ # layman -a ff-overlay
 ```
