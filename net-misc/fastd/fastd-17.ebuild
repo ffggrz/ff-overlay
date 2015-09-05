@@ -56,9 +56,11 @@ src_configure() {
 }
 
 src_install() {
+        newinitd "${FILESDIR}/${PN}.init" fastd || die
+
         cd "${CMAKE_BUILD_DIR}" || die
-    emake DESTDIR="${D}" install
+        emake DESTDIR="${D}" install
         cd "${S}" || die
-    dodoc README COPYRIGHT
+        dodoc README COPYRIGHT
         doman doc/fastd.1
 }

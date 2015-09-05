@@ -1,0 +1,90 @@
+#!/sbin/runscript
+# Copyright 1999-2007 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+
+VPNDIR=${VPNDIR:-/etc/fastd}
+VPN=${SVCNAME#*.}
+if [ -n "${VPN}" ] && [ ${SVCNAME} != "fastd" ]; then
+	VPNPID="/var/run/fastd.${VPN}.pid"
+else
+	VPNPID="/var/run/fastd.pid"
+fi
+VPNCONF="${VPNDIR}/${VPN}/fastd.conf"
+
+depend() {
+	need localmount net
+	after bootmisc
+}
+
+checkconfig() {
+	# Linux has good dynamic tun/tap creation
+	if [ $(uname -s) = "Linux" ] ; then
+		if [ ! -e /dev/net/tun ]; then
+			if ! modprobe tun ; then
+				eerror "TUN/TAP support is not available" \
+					"in this kernel"
+				return 1
+			fi
+		fi
+		if [ -h /dev/net/tun ] && [ -c /dev/misc/net/tun ]; then
+			ebegin "Detected broken /dev/net/tun symlink, fixing..."
+			rm -f /dev/net/tun
+			ln -s /dev/misc/net/tun /dev/net/tun
+			eend $?
+		fi
+		return 0
+	fi
+
+	# Other OS's don't, so we rely on a pre-configured interface
+	# per vpn instance
+	local ifname=$(sed -n -e 's/[[:space:]]*dev[[:space:]][[:space:]]*\([^[:space:]]*\).*/\1/p' "${VPNCONF}")
+	if [ -z ${ifname} ] ; then
+		eerror "You need to specify the interface that this fastd" \
+			"instance should use" \
+			"by using the dev option in ${VPNCONF}"
+		return 1
+	fi
+
+	if ! ifconfig "${ifname}" >/dev/null 2>/dev/null ; then
+		# Try and create it
+		echo > /dev/"${ifname}" >/dev/null
+	fi
+	if ! ifconfig "${ifname}" >/dev/null 2>/dev/null ; then
+		eerror "${VPNCONF} requires interface ${ifname}" \
+			"but that does not exist"
+		return 1
+	fi
+}
+
+start() {
+	# If we are re-called by the fastd gentoo-up.sh script
+	# then we don't actually want to start fastd
+	[ "${IN_BACKGROUND}" = "true" ] && return 0
+	
+	ebegin "Starting ${SVCNAME}"
+
+	checkconfig || return 1
+
+	local reenter=${RE_ENTER:-no}
+
+	[ "${reenter}" = "yes" ] && mark_service_inactive "${SVCNAME}"
+	start-stop-daemon --start --exec /usr/bin/fastd --pidfile "${VPNPID}" \
+		-- --config "${VPNCONF}" --pid-file "${VPNPID}" --daemon
+	eend $? "Check your logs to see why startup failed"
+}
+
+stop() {
+	# If we are re-called by the fastd gentoo-down.sh script
+	# then we don't actually want to stop fastd
+	if [ "${IN_BACKGROUND}" = "true" ] ; then
+		mark_service_inactive "${SVCNAME}"
+		return 0
+	fi
+
+	ebegin "Stopping ${SVCNAME}"
+	start-stop-daemon --stop --quiet \
+		--exec /usr/bin/fastd --pidfile "${VPNPID}"
+	eend $?
+}
+
+# vim: set ts=4 :
