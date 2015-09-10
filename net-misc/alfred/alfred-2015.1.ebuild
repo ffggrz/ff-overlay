@@ -13,14 +13,20 @@ SRC_URI="http://downloads.open-mesh.org/batman/stable/sources/${PN}/${P}.tar.gz"
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="gpsd +visd"
+IUSE="+caps gpsd +visd"
 
-DEPEND="sys-libs/libcap
+DEPEND="caps? ( >=sys-libs/libcap-2.23 )
         gpsd? ( sci-geosciences/gpsd )"
-##RDEPEND=""
 
 src_compile() {
-	local myconf="LIBCAP_LDLIBS=-lcap"
+##	local myconf="LIBCAP_LDLIBS=-lcap"
+	local myconf
+
+	if use caps; then
+		myconf="${myconf} CONFIG_ALFRED_CAPABILITIES=y"
+	else
+		myconf="${myconf} CONFIG_ALFRED_CAPABILITIES=n"
+	fi
 
 	if use gpsd; then
 		myconf="${myconf} CONFIG_ALFRED_GPSD=y"
@@ -38,7 +44,14 @@ src_compile() {
 }
 
 src_install() {
-	local myconf="LIBCAP_LDLIBS=-lcap"
+##	local myconf="LIBCAP_LDLIBS=-lcap"
+	local myconf
+
+	if use caps; then
+		myconf="${myconf} CONFIG_ALFRED_CAPABILITIES=y"
+	else
+		myconf="${myconf} CONFIG_ALFRED_CAPABILITIES=n"
+	fi
 
 	if use gpsd; then
 		myconf="${myconf} CONFIG_ALFRED_GPSD=y"
@@ -54,5 +67,8 @@ src_install() {
 
 	emake DESTDIR="${D}" PREFIX="/usr" ${myconf} install || die
 
-        dodoc README CHANGELOG
+	newinitd "${FILESDIR}/${PN}.init" ${PN} || die
+	newconfd "${FILESDIR}/${PN}.conf" ${PN} || die
+
+	dodoc README CHANGELOG
 }

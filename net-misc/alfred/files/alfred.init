@@ -1,0 +1,29 @@
+#!/sbin/runscript
+# Copyright 1999-2015 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+# $Id$
+
+ALFRED_PIDALFRED="${ALFRED_PIDALFRED:-/run/alfred.pid}"
+ALFRED_PIDVIS="${ALFRED_PIDVIS:-/run/batadv-vis.pid}"
+
+start() {
+	ebegin "Starting alfred"
+	start-stop-daemon -b --start --quiet \
+		--make-pidfile --pidfile "${ALFRED_PIDALFRED}"\
+		 --exec /usr/sbin/alfred -- -m -i ${ALFRED_IFCBAT} -b ${ALFRED_IFCBAT}
+	ebegin "Starting batadv-vis"
+	start-stop-daemon -b --start \
+		--quiet --make-pidfile --pidfile "${ALFRED_PIDVIS}" \
+		--exec /usr/sbin/batadv-vis -- -si ${ALFRED_IFCBAT}
+	eend $?
+}
+
+stop() {
+	ebegin "Stopping batadv-vis"
+	start-stop-daemon --stop --quiet \
+		--pidfile "${ALFRED_PIDVIS}"
+	ebegin "Stopping alfred"
+	start-stop-daemon --stop --quiet \
+		--pidfile "${ALFRED_PIDALFRED}"
+	eend $?
+}
