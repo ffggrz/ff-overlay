@@ -10,7 +10,7 @@ start() {
 	ebegin "Starting alfred"
 	start-stop-daemon -b --start --quiet \
 		--make-pidfile --pidfile "${ALFRED_PIDALFRED}"\
-		 --exec /usr/sbin/alfred -- -m -i ${ALFRED_IFCBAT} -b ${ALFRED_IFCBAT}
+		 --exec /usr/sbin/alfred -- -m -i ${ALFRED_IFC} -b ${ALFRED_IFCBAT}
 	ebegin "Starting batadv-vis"
 	start-stop-daemon -b --start \
 		--quiet --make-pidfile --pidfile "${ALFRED_PIDVIS}" \
