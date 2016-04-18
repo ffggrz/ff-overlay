@@ -1,0 +1,7 @@
+# Global variables
+SHELL=/bin/bash
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+MAILTO=root
+HOME=/
+
+* * * * * root /opt/alfred-announce/announce.sh -u /var/run/alfred.sock
