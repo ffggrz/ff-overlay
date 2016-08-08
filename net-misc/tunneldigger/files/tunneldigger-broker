@@ -1,0 +1,15 @@
+#!/usr/bin/python2.7
+# -*- coding: utf-8 -*-
+
+"""
+
+ tunneldigger-broker
+
+"""
+
+try:
+   from broker.main import main
+   main()
+except ImportError as e:
+   print('Error: Could not import broker')
+   print('Cause: %s' % e)
