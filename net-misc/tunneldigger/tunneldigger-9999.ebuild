@@ -28,6 +28,7 @@ CONFIG_CHECK="~L2TP_ETH"
 ERROR_L2TP_ETH="${PN} requires support for carrying raw ethernet frames over L2TPv3 in your kernel (module name: l2tp_eth)".
 
 src_prepare() {
+        epatch ${FILESDIR}/tunneldigger-conntrack-defparam.diff
         cp ${FILESDIR}/setup.py ${S}
         mkdir ${S}/bin
         cp ${FILESDIR}/tunneldigger-broker ${S}/bin/
@@ -59,25 +60,5 @@ src_install() {
                 emake install || die
         fi
 
-
-##        doman doc/qr.1
+        newinitd "${FILESDIR}/${PN}.init" tunneldigger || die
 }
-
-##src_install() {
-##
-##        rm -rf .git*
-##
-##        insinto /opt/${PN}
-##        doins -r .
-##
-##        exeinto /opt/${PN}
-##        doexe announce.{py,sh}
-##
-##        # Add cron.d script
-##        insinto /etc/cron.d
-##        newins "${FILESDIR}/${PN}.cron" ${PN}
-##        fperms 644 /etc/cron.d/${PN}
-##
-##        dodir /etc/env.d
-##        echo "CONFIG_PROTECT=/opt/${PN}/config.json" >> "${ED}"/etc/env.d/30${PN}
-##}

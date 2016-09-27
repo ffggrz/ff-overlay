@@ -1,0 +1,50 @@
+#!/sbin/runscript
+# Copyright 1999-2007 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+
+VPNDIR=${VPNDIR:-/etc/tunneldigger}
+VPN=${SVCNAME#*.}
+if [ -n "${VPN}" ] && [ ${SVCNAME} != "tunneldigger" ]; then
+	VPNPID="/var/run/tunneldigger.${VPN}.pid"
+else
+	VPNPID="/var/run/tunneldigger.pid"
+fi
+VPNCONF="${VPNDIR}/${VPN}/tunneldigger.conf"
+
+depend() {
+	need localmount net
+	after bootmisc
+}
+
+start() {
+	# If we are re-called by the tunneldigger gentoo-up.sh script
+	# then we don't actually want to start tunneldigger
+	[ "${IN_BACKGROUND}" = "true" ] && return 0
+	
+	ebegin "Starting ${SVCNAME}"
+
+	local reenter=${RE_ENTER:-no}
+
+	[ "${reenter}" = "yes" ] && mark_service_inactive "${SVCNAME}"
+	start-stop-daemon --start --background --exec /usr/bin/tunneldigger-broker \
+		--make-pidfile --pidfile "${VPNPID}" \
+		--stderr /var/log/tunneldigger-broker.log \
+		-- "${VPNCONF}"
+	eend $? "Check your logs to see why startup failed"
+}
+
+stop() {
+	# If we are re-called by the tunneldigger gentoo-down.sh script
+	# then we don't actually want to stop tunneldigger
+	if [ "${IN_BACKGROUND}" = "true" ] ; then
+		mark_service_inactive "${SVCNAME}"
+		return 0
+	fi
+
+	ebegin "Stopping ${SVCNAME}"
+	start-stop-daemon --stop --quiet \
+		--exec /usr/bin/tunneldigger-broker --pidfile "${VPNPID}"
+	eend $?
+}
+
+# vim: set ts=4 :

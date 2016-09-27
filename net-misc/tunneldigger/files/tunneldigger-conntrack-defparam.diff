@@ -1,0 +1,56 @@
+diff -Naur tunneldigger-orig/broker/conntrack.py tunneldigger/broker/conntrack.py
+--- tunneldigger-orig/broker/conntrack.py	2016-09-26 19:53:48.000000000 +0200
++++ tunneldigger/broker/conntrack.py	2016-09-26 19:49:47.000000000 +0200
+@@ -30,6 +30,14 @@
+ from threading import Thread, Lock
+ from socket import AF_INET, AF_INET6, IPPROTO_TCP, IPPROTO_UDP
+ 
++# Define nf_conntrack_p and nfct_handle_p: pointer to fake structures
++class nf_conntrack(Structure):
++    pass
++nf_conntrack_p = POINTER(nf_conntrack)
++class nfct_handle(Structure):
++    pass
++nfct_handle_p = POINTER(nfct_handle)
++
+ nfct = CDLL('libnetfilter_conntrack.so.3')
+ try:
+     libc = CDLL('libc.so.6')
+@@ -37,8 +45,36 @@
+     # Support OpenWRT.
+     libc = CDLL('libc.so.0')
+ 
++uint8_t = c_ubyte
++uint16_t = c_ushort
++uint32_t = c_uint
++
++NFCT_CALLBACK = CFUNCTYPE(c_int, c_int, nf_conntrack_p, c_void_p)
+ 
+-NFCT_CALLBACK = CFUNCTYPE(c_int, c_int, c_void_p, c_void_p)
++nfct.nfct_callback_register.argtypes = [nfct_handle_p, c_int, NFCT_CALLBACK, c_void_p]
++nfct.nfct_callback_register.restype = c_int
++nfct.nfct_catch.argtypes = [nfct_handle_p, ]
++nfct.nfct_catch.restype = c_int
++nfct.nfct_close.argtypes = [nfct_handle_p, ]
++nfct.nfct_close.restype = c_int
++nfct.nfct_cmp.argtypes = [nf_conntrack_p, nf_conntrack_p, c_uint]
++nfct.nfct_cmp.restype = c_int
++nfct.nfct_new.argtypes = []
++nfct.nfct_new.restype = nf_conntrack_p
++nfct.nfct_open.argtypes = [uint8_t, c_uint]
++nfct.nfct_open.restype = nfct_handle_p
++nfct.nfct_query.argtypes = [nfct_handle_p, c_int, c_void_p]
++nfct.nfct_query.restype = c_int
++nfct.nfct_set_attr_u8.argtypes = [nf_conntrack_p, uint8_t]
++nfct.nfct_set_attr_u8.restype = None
++nfct.nfct_set_attr_u16.argtypes = [nf_conntrack_p, uint16_t]
++nfct.nfct_set_attr_u16.restype = None
++nfct.nfct_set_attr_u32.argtypes = [nf_conntrack_p, uint32_t]
++nfct.nfct_set_attr_u32.restype = None
++##nfct.nfct_set_attr_u128.argtypes = [nf_conntrack_p, uint128_t]
++##nfct.nfct_set_attr_u128.restype = None
++nfct.nfct_snprintf.argtypes = [c_char_p, c_uint, nf_conntrack_p, c_uint, c_uint, c_uint]
++nfct.nfct_snprintf.restype = c_int
+ 
+ # conntrack
+ CONNTRACK = 1
