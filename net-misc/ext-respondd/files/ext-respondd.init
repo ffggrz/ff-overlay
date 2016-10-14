@@ -1,0 +1,23 @@
+#!/sbin/openrc-run
+# Copyright 1999-2012 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+# $Id$
+
+DAEMON='/usr/bin/python3 /opt/ext-respondd/ext-respondd.py'
+
+depend() {
+	need net
+	use logger
+}
+
+start() {
+	ebegin "Starting RespondD"
+	start-stop-daemon --start --background --quiet --make-pidfile --pidfile /run/ext-respondd.pid --chdir /opt/ext-respondd --exec $DAEMON
+	eend $? "Failed to start RespondD"
+}
+
+stop() {
+	ebegin "Stopping RespondD"
+	start-stop-daemon --stop --quiet --pidfile /run/ext-respondd.pid
+	eend $? "Failed to stop RespondD"
+}
