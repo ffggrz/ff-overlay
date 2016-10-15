@@ -29,6 +29,7 @@ ERROR_L2TP_ETH="${PN} requires support for carrying raw ethernet frames over L2T
 
 src_prepare() {
         epatch ${FILESDIR}/tunneldigger-conntrack-defparam.diff
+        epatch ${FILESDIR}/tunneldigger-logging-timestamp.diff
         cp ${FILESDIR}/setup.py ${S}
         mkdir ${S}/bin
         cp ${FILESDIR}/tunneldigger-broker ${S}/bin/
