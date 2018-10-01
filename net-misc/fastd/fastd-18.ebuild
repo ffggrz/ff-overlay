@@ -23,7 +23,7 @@ IUSE="doc lto +openssl systemd"
 
 RDEPEND="
 	sys-libs/libcap
-	dev-libs/libsodium
+	<dev-libs/libsodium-1.0.15
 	dev-libs/json-c
 	>=dev-libs/libuecc-6
 	openssl? ( dev-libs/openssl )
