@@ -1,0 +1,34 @@
+#!/sbin/openrc-run
+# Copyright 1999-2006 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+
+TMUXUSER=${SVCNAME#*.}
+if [ ! -n "${TMUXUSER}" ] || [ ${SVCNAME} == "tmux" ]; then
+        TMUXUSER="root"
+fi
+
+depend() {
+        use logger net
+}
+
+start() {
+        ebegin "Starting tmux for ${TMUXUSER}"
+        TMUXSHELL="$(getent passwd ${TMUXUSER} | cut -d: -f7)"
+        start-stop-daemon \
+                --env TERM="rxvt" \
+                --env HOME="~${TMUXUSER}" \
+                --env SHELL="${TMUXSHELL}" \
+                --user $TMUXUSER \
+                --chdir "~${TMUXUSER}" \
+                --background \
+                --exec /usr/bin/tmux -- new-session -s ts-${TMUXUSER} -d $TMUX_CL_EXTEND
+        eend $?
+}
+
+stop() {
+        ebegin "Stopping tmux for ${TMUXUSER}"
+        start-stop-daemon \
+                --user $TMUXUSER \
+                --exec /usr/bin/tmux -- kill-session -t ts-${TMUXUSER}
+        eend $?
+}

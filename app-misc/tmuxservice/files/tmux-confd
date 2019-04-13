@@ -1,0 +1,3 @@
+# /etc/conf.d/tmux: config file for /etc/init.d/tmux
+
+TMUX_CL_EXTEND="; split-window -v ; split-window -h /usr/bin/mc ; set status-left-length 20 ;"
