@@ -1,7 +1,0 @@
-# Global variables
-SHELL=/bin/bash
-PATH=/sbin:/bin:/usr/sbin:/usr/bin
-MAILTO=root
-HOME=/
-
-* * * * * root /opt/ffmap-backend/backend.py -m ggrzBAT -d /var/www/localhost/htdocs/data -a /opt/ffmap-backend/aliases.json --vpn de:ad:be:ef:01:01 --with-rrd

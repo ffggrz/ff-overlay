@@ -12,7 +12,7 @@ inherit cmake-utils
 DESCRIPTION="Very small elliptic curve cryptography library"
 HOMEPAGE="http://git.universe-factory.net/libuecc/"
 [[ ${PV} == *9999* ]] || \
-SRC_URI="https://git.universe-factory.net/libuecc/snapshot/${P}.tar.xz"
+SRC_URI="https://projects.universe-factory.net/attachments/download/85/${P}.tar.xz"
 
 LICENSE="BSD"
 SLOT="0"

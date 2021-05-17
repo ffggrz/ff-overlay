@@ -2,13 +2,13 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI=5
+EAPI=6
 
-PYTHON_COMPAT=( python{3_3,3_4} )
+PYTHON_COMPAT=( python{3_3,3_4,3_5,3_6,3_7,3_8,3_9} )
 
 EGIT_REPO_URI="https://github.com/ffnord/${PN}.git"
 
-inherit git-r3
+inherit git-r3 systemd
 
 DESCRIPTION="RespondD Status Scripts for Servers"
 HOMEPAGE="https://github.com/ffnord/mesh-announce"
@@ -17,10 +17,13 @@ LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~alpha ~amd64 ~amd64-fbsd ~arm ~arm64 ~hppa ~ia64 ~m68k ~mips ~powerpc ~s390 ~sh ~sparc ~sparc-fbsd ~x86 ~x86-fbsd"
 
-RDEPEND="sys-apps/ethtool
+RDEPEND="dev-python/psutil
+         sys-apps/ethtool
          sys-apps/lsb-release"
 
 src_install() {
+        systemd_dounit respondd.service
+        rm respondd.service
 
         rm -rf .git*
 

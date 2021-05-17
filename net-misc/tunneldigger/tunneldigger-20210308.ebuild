@@ -2,13 +2,12 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI=5
+EAPI=6
 
-##PYTHON_COMPAT=( python2_7 python3_{3,4,5,6} )
-PYTHON_COMPAT=( python2_7 )
+PYTHON_COMPAT=( python3_{5,6,7,8} )
 
 EGIT_REPO_URI="https://github.com/wlanslovenija/${PN}.git"
-EGIT_COMMIT="18f365f329795400f4d7a101a6d45bc859100144"
+EGIT_COMMIT="4f72b30578ac3dbc5482f4a54054bf870355bdf5"
 
 inherit distutils-r1 linux-info git-r3
 
@@ -22,19 +21,18 @@ KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 IUSE="+broker client +doc"
 
 RDEPEND="client? ( dev-libs/libnl:3 )
-         broker? ( net-libs/libnetfilter_conntrack
-                   dev-python/python-iptables
-                   dev-python/python-netfilter )
+         broker? ( dev-libs/libevent
+                   net-firewall/ebtables
+                   net-misc/bridge-utils
+                   sys-apps/iproute2 )
          doc? ( dev-python/sphinx )"
 
 CONFIG_CHECK="~L2TP_ETH"
 ERROR_L2TP_ETH="${PN} requires support for carrying raw ethernet frames over L2TPv3 in your kernel (module name: l2tp_eth)".
 
 src_prepare() {
+        default
         if use broker; then
-##                epatch ${FILESDIR}/tunneldigger-conntrack-defparam.diff
-##                epatch ${FILESDIR}/tunneldigger-logging-timestamp.diff
-                cp ${FILESDIR}/setup.py ${S}/broker/
                 mkdir -p ${S}/broker/bin
                 cp ${FILESDIR}/tunneldigger-broker ${S}/broker/bin/
         fi

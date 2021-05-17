@@ -2,17 +2,17 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI=5
+EAPI=6
 
-EGIT_REPO_URI="https://github.com/tcatm/ecdsautils.git"
+EGIT_REPO_URI="https://github.com/freifunk-gluon/ecdsautils.git"
 
 inherit cmake-utils
 [[ ${PV} == *9999* ]] && inherit git-2
 
 DESCRIPTION="Very small elliptic curve cryptography library"
-HOMEPAGE="https://github.com/tcatm/ecdsautils"
+HOMEPAGE="https://github.com/freifunk-gluon/ecdsautils"
 [[ ${PV} == *9999* ]] || \
-SRC_URI="https://github.com/tcatm/${PN}/archive/v${PV}.tar.gz"
+SRC_URI="https://github.com/freifunk-gluon/${PN}/archive/refs/tags/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="BSD"
 SLOT="0"
