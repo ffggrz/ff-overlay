@@ -2,9 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI=6
+EAPI=7
 
-PYTHON_COMPAT=( python3_{5,6,7,8} )
+PYTHON_COMPAT=( python3_{5,6,7,8,9,10,11} )
 
 EGIT_REPO_URI="https://github.com/wlanslovenija/${PN}.git"
 EGIT_COMMIT="4f72b30578ac3dbc5482f4a54054bf870355bdf5"

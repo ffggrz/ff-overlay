@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI=6
+EAPI=7
 
 CONFIG_CHECK="~!BATMAN_ADV ~LIBCRC32C ~CRC16"
 MODULE_NAMES="${PN}(net:${S}:${S}/net/${PN})"
@@ -21,10 +21,6 @@ IUSE="batmanv bla dat debug nc mcast +sysfs tracing"
 
 DEPEND=""
 RDEPEND=""
-
-##src_prepare() {
-##        epatch "${FILESDIR}"/decrease-maximum-fragment-size-${PV}.patch
-##}
 
 src_compile() {
 	BUILD_PARAMS="CONFIG_BATMAN_ADV_DEBUG=$(usex debug y n)"

@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI=4
+EAPI=8
 
 inherit linux-info toolchain-funcs
 
@@ -33,5 +33,5 @@ src_compile() {
 
 src_install() {
 	emake DESTDIR="${D}" PREFIX="${EPREFIX}"/usr install
-	dodoc README
+	dodoc README.rst CHANGELOG.rst
 }

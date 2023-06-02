@@ -32,8 +32,11 @@ RDEPEND="
 DEPEND="
 	>=sys-devel/bison-2.5.0
 	dev-util/cmake
-	dev-util/pkgconfig
 	doc? ( app-doc/doxygen )
+"
+
+BDEPEND="
+	virtual/pkgconfig
 "
 
 src_configure() {

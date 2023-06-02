@@ -2,11 +2,11 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI=6
+EAPI=7
 
 EGIT_REPO_URI="https://github.com/freifunk-gluon/ecdsautils.git"
 
-inherit cmake-utils
+inherit cmake
 [[ ${PV} == *9999* ]] && inherit git-2
 
 DESCRIPTION="Very small elliptic curve cryptography library"
@@ -22,12 +22,3 @@ KEYWORDS="~alpha ~amd64 ~amd64-fbsd ~arm ~arm64 ~hppa ~ia64 ~m68k ~mips ~powerpc
 RDEPEND="
         >=dev-libs/libuecc-4
 "
-
-src_prepare() {
-	cmake-utils_src_prepare
-}
-
-src_configure() {
-	cmake-utils_src_configure
-}
-
